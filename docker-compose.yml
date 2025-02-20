@@ -1,0 +1,47 @@
+services:
+  php:
+    container_name: php-con
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: seekode-php-apache
+    volumes:
+      - ./src:/var/www/html/
+    environment:
+      XDEBUG_MODE: debug,developer
+      XDEBUG_CONFIG: remote_enable=1 remote_autostart=1
+    ports:
+      - 80:80
+    networks:
+      - app-network
+
+  mysql:
+    container_name: mysql-con
+    image: mysql
+    volumes:
+      - ./database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+      MYSQL_DATABASE: database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - app-network
+
+  phpmyadmin:
+    container_name: phpmyadmin-con
+    image: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql-con
+      PMA_USER: user
+      PMA_PASSWORD: password
+    ports:
+      - '8080:80'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
