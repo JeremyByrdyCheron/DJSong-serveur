@@ -1,5 +1,13 @@
 <?php
 
+http_response_code(400);
+echo json_encode([
+	'error' => $_POST,
+]);
+
+exit;
+
+
 $error = [];
 
 if (!empty($_POST)) {
@@ -23,13 +31,21 @@ if (!empty($_POST)) {
 
 	if (empty($error)) {
 		if ($user->register()) {
-			redirectTo('/');
+			http_response_code(200);
+			exit;
 		} else {
 			$error['global'] = 'Echec de l\'enregistrement';
 		}
 	}
+} else {
+	http_response_code(400);
+	echo json_encode([
+		'error' => 'form empty',
+	]);
+	exit;
 }
 
-render('index', false, [
+http_response_code(400);
+echo json_encode([
 	'error' => $error,
 ]);
