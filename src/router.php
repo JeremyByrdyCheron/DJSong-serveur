@@ -6,7 +6,7 @@ $path = $_SERVER['REDIRECT_URL'];
 
 
 if ($path == '/') {
-	require 'controllers/indexController.php';
+	require 'controllers/homeConnexionController.php';
 } else {
 
 	if (isset(explode('/', $path)[3])) {

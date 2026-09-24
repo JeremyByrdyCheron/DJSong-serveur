@@ -1,7 +1,5 @@
 <?php
 
-
-
 $error = [];
 
 if (!empty($_POST)) {
@@ -32,6 +30,7 @@ if (!empty($_POST)) {
 		}
 	}
 } else {
+
 	http_response_code(400);
 	echo json_encode([
 		'error' => 'form empty',
