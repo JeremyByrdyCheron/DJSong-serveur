@@ -2,6 +2,8 @@
 
 namespace Models;
 
+use DateTime;
+use DateTimeImmutable;
 use Exception;
 use PDO;
 
@@ -11,6 +13,8 @@ class User extends Database
 	private $username;
 	private $email;
 	private $password;
+
+	private $userCode;
 
 	private $subscriptionId;
 	private $subscriptionEnd;
@@ -64,6 +68,18 @@ class User extends Database
 		return $this->password;
 	}
 
+	public function getUserCode()
+	{
+		return $this->userCode;
+	}
+
+	public function setUserCode()
+	{
+		$uuid = uniqid();
+		$this->userCode = $uuid;
+
+	}
+
 	public function getSubscriptionId()
 	{
 		return $this->subscriptionId;
@@ -85,12 +101,21 @@ class User extends Database
 
 	public function register()
 	{
-		$queryExecute = $this->db->prepare("INSERT INTO `users`(`username`, `email`, `password`) 
-			VALUES (:username, :email, :password)");
+
+		$this->setUserCode();
+		$this->setSubscriptionId(0);
+		$endDate = new DateTimeImmutable("2099-12-31");
+		$this->setSubscriptionEnd($endDate->format("d-m-Y"));
+
+		$queryExecute = $this->db->prepare("INSERT INTO `users`(`username`, `email`, `password`, `user_code`, `subscription_id`, `subscription_end`) 
+			VALUES (:username, :email, :password, :user_code, :subscription_id, :subscription_end)");
 
 		$queryExecute->bindValue(':username', $this->username, PDO::PARAM_STR);
 		$queryExecute->bindValue(':email', $this->email, PDO::PARAM_STR);
 		$queryExecute->bindValue(':password', $this->password, PDO::PARAM_STR);
+		$queryExecute->bindValue(':user_code', $this->userCode, PDO::PARAM_STR);
+		$queryExecute->bindValue(':subscription_id', $this->subscriptionId, PDO::PARAM_STR);
+		$queryExecute->bindValue('subscription_end', $this->subscriptionEnd, PDO::PARAM_STR);
 
 		return $queryExecute->execute();
 	}
