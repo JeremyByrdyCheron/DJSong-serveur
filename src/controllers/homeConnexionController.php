@@ -24,6 +24,7 @@ if (!empty($_POST)) {
 	if (empty($error)) {
 		if ($user->register()) {
 			http_response_code(200);
+			echo json_encode(["isConnected" => true]);
 			exit;
 		} else {
 			$error['global'] = 'Echec de l\'enregistrement';
