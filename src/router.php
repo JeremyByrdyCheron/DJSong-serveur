@@ -6,11 +6,16 @@ $path = $_SERVER['REDIRECT_URL'];
 
 
 if ($path == '/') {
-	require 'controllers/indexController.php';
+	require 'controllers/homeConnexionController.php';
 } else {
-	$path = explode('/', $path)[1];
 
-	$controlleur = 'controllers/' . $path . 'Controller.php';
+	if (isset(explode('/', $path)[3])) {
+		$controlleur = 'controllers/' . explode('/', $path)[1] . '/' . explode('/', $path)[3] . 'Controller.php';
+	} else {
+		$path = explode('/', $path)[1];
+		$controlleur = 'controllers/' . $path . 'Controller.php';
+	}
+
 
 	if (file_exists($controlleur)) {
 		require $controlleur;
