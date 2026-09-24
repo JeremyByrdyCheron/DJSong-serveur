@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use DateTime;
 use DateTimeImmutable;
 use Exception;
 use PDO;
@@ -30,9 +29,9 @@ class User extends Database
 	{
 		if (empty($value))
 			throw new Exception('Username is required');
-		if (strlen($value) > 3 && strlen($value) < 10)
-			throw new Exception('Username must be between 3 and 10 characters');
-		if (preg_match('/^[a-zA-Z0-9]+$/', $value))
+		if (strlen($value) < 3 || strlen($value) > 255)
+			throw new Exception('Username must be between 3 and 255 characters');
+		if (!preg_match('/^[a-zA-Z0-9]+$/', $value))
 			throw new Exception('Username can only contain letters and numbers');
 
 		$this->username = htmlspecialchars($value);
@@ -57,7 +56,7 @@ class User extends Database
 	{
 		if (empty($value))
 			throw new Exception('Password is required');
-		if (strlen($value) > 3)
+		if (strlen($value) < 3)
 			throw new Exception('Password must be at least 3 characters');
 
 		$this->password = password_hash($value, PASSWORD_DEFAULT);
@@ -95,7 +94,7 @@ class User extends Database
 	}
 	public function setSubscriptionEnd($value)
 	{
-		$this->setSubscriptionEnd($value);
+		$this->subscriptionEnd = $value;
 	}
 
 
@@ -103,9 +102,9 @@ class User extends Database
 	{
 
 		$this->setUserCode();
-		$this->setSubscriptionId(0);
+		$this->setSubscriptionId(1);
 		$endDate = new DateTimeImmutable("2099-12-31");
-		$this->setSubscriptionEnd($endDate->format("d-m-Y"));
+		$this->setSubscriptionEnd($endDate->format("Y-m-d"));
 
 		$queryExecute = $this->db->prepare("INSERT INTO `users`(`username`, `email`, `password`, `user_code`, `subscription_id`, `subscription_end`) 
 			VALUES (:username, :email, :password, :user_code, :subscription_id, :subscription_end)");
