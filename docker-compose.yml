@@ -11,7 +11,7 @@ services:
       XDEBUG_MODE: debug,developer
       XDEBUG_CONFIG: remote_enable=1 remote_autostart=1
     ports:
-      - 80:80
+      - 8000:80
     networks:
       - app-network
 

@@ -22,12 +22,13 @@ if (!empty($_POST)) {
 	}
 
 	if (empty($error)) {
-		if ($user->register()) {
+		// Au lieu d'utiliser register(), on utilise login()
+		if ($user->login($_POST['password'])) {
 			http_response_code(200);
 			echo json_encode(["isConnected" => true]);
 			exit;
 		} else {
-			$error['global'] = 'Echec de l\'enregistrement';
+			$error['global'] = 'Email ou mot de passe incorrect';
 		}
 	}
 } else {
