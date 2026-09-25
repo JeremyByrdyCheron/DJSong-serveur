@@ -1,4 +1,13 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 86400,
+    'path' => '/',
+    'secure' => false, // false car on est en local (http)
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+session_start();
+
 require 'utils/utils.php';
 require 'utils/splAutoload.php';
 

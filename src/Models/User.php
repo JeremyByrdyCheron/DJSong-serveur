@@ -128,6 +128,24 @@ class User extends Database
 		$queryExecute->bindValue(':subscription_id', $this->subscriptionId, PDO::PARAM_STR);
 		$queryExecute->bindValue('subscription_end', $this->subscriptionEnd, PDO::PARAM_STR);
 
-		return $queryExecute->execute();
+		if ($queryExecute->execute()) {
+			$_SESSION['user_id'] = $this->db->lastInsertId();
+			return true;
+		}
+		return false;
+	}
+
+	public function login($rawPassword)
+	{
+		$queryExecute = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+		$queryExecute->bindValue(':email', $this->email, PDO::PARAM_STR);
+		$queryExecute->execute();
+		$userData = $queryExecute->fetch(PDO::FETCH_ASSOC);
+
+		if ($userData && password_verify($rawPassword, $userData['password'])) {
+			$_SESSION['user_id'] = $userData['id'];
+			return true;
+		}
+		return false;
 	}
 }
