@@ -97,6 +97,18 @@ class User extends Database
 		$this->subscriptionEnd = $value;
 	}
 
+	public function getUserById($value)
+	{
+		$queryExecute = $this->db->prepare("SELECT sub.name, song.*, u.* FROM users u
+		LEFT JOIN subscription sub ON u.subscription_id= sub.id 
+		LEFT join song_project song on u.id = song.user_id
+		WHERE u.id = :id");
+		$queryExecute->bindValue(':id', $value, PDO::PARAM_STR);
+
+		$queryExecute->execute();
+		return $queryExecute->fetchAll(PDO::FETCH_OBJ);
+	}
+
 
 	public function register()
 	{
