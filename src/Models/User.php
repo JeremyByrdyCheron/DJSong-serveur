@@ -12,13 +12,22 @@ class User extends Database
 	private $username;
 	private $email;
 	private $password;
-
+	private $token;
 	private $userCode;
 
 	private $subscriptionId;
 	private $subscriptionEnd;
 
+public function getToken()
+	{
+		return $this->username;
+	}
 
+	public function setToken()
+	{
+    $this->token= password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
+
+	}
 
 	public function getUsername()
 	{
@@ -106,8 +115,8 @@ class User extends Database
 		$endDate = new DateTimeImmutable("2099-12-31");
 		$this->setSubscriptionEnd($endDate->format("Y-m-d"));
 
-		$queryExecute = $this->db->prepare("INSERT INTO `users`(`username`, `email`, `password`, `user_code`, `subscription_id`, `subscription_end`) 
-			VALUES (:username, :email, :password, :user_code, :subscription_id, :subscription_end)");
+		$queryExecute = $this->db->prepare("INSERT INTO `users`(`username`, `email`, `password`, `user_code`, `subscription_id`, `subscription_end`,`token`) 
+			VALUES (:username, :email, :password, :user_code, :subscription_id, :subscription_end, :token)");
 
 		$queryExecute->bindValue(':username', $this->username, PDO::PARAM_STR);
 		$queryExecute->bindValue(':email', $this->email, PDO::PARAM_STR);
@@ -115,7 +124,19 @@ class User extends Database
 		$queryExecute->bindValue(':user_code', $this->userCode, PDO::PARAM_STR);
 		$queryExecute->bindValue(':subscription_id', $this->subscriptionId, PDO::PARAM_STR);
 		$queryExecute->bindValue('subscription_end', $this->subscriptionEnd, PDO::PARAM_STR);
+		$queryExecute->bindValue('token', $this->token, PDO::PARAM_STR);
 
 		return $queryExecute->execute();
+	}
+		public function getUser()
+	{
+
+		$sql = "SELECT * FROM users WHERE `email` :email and `password` :password";
+		$queryExecute = $this->db->prepare($sql);
+		$queryExecute->bindValue(':email', $this ->email, PDO::PARAM_STR);
+		$queryExecute->bindValue(':password', $this ->password, PDO::PARAM_STR);
+
+		$queryExecute->execute();
+		return $queryExecute->fetch(PDO::FETCH_OBJ);
 	}
 }
